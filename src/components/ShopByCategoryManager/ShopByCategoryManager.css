@@ -1,0 +1,232 @@
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust min width as needed */
+  gap: 1rem;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+.category-slot {
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  min-height: 150px; /* Default minimum height for an empty slot */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  color: #777;
+  font-style: italic;
+}
+
+.category-slot.filled {
+  border: none;
+  background-color: transparent;
+  color: white; /* Default text color for filled slots */
+  display: flex; /* To allow inner category-card to take full height */
+}
+
+.category-slot.empty .placeholder {
+  text-align: center;
+}
+
+/* Width Classes (applied to the slots) */
+.box-w-big {
+  grid-column: span 2; /* Takes up 2 grid columns */
+}
+
+.box-w-medium {
+  grid-column: span 1; /* Takes up 1 grid column */
+}
+
+.box-w-small {
+  grid-column: span 1; /* Takes up 1 grid column */
+}
+
+/* Height Classes (applied to the slots and the category cards within) */
+.h-50 {
+  height: 300px; /* Example fixed height - adjust as needed */
+}
+
+.card-h-33 {
+  height: 200px; /* Example fixed height - adjust as needed */
+}
+
+.card-h-66 {
+  height: 400px; /* Example fixed height - adjust as needed */
+}
+
+.h-30 {
+  height: 180px; /* Example fixed height - adjust as needed */
+}
+
+/* Category Card Styling (within the slot) */
+.category-card {
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  position: relative;
+  text-decoration: none;
+  color: white;
+  width: 100%;
+  height: 100%; /* Make the card fill the slot */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Push name and actions to the bottom */
+}
+
+/* Background Colors */
+.background-black {
+  background-color: #222222af;
+  color: aliceblue;
+}
+
+.background-pink {
+  background-color: #ffc0cbbe;
+  color: #222;
+}
+
+.background-blue {
+  background-color: #c0ccffbe;
+  color: #222;
+}
+
+.categoryheading {
+  text-align: center;
+  margin-bottom: 1rem; /* Add some space below the heading */
+}
+
+.category-name {
+  background-color: rgba(0, 0, 0, 0.6); /* Add a background for better readability */
+  border-radius: 0 0 12px 12px;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  font-family: "Montserrat", sans-serif !important;
+  width: 100%;
+}
+
+.card-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+  z-index: 10; /* Ensure actions are above the category name */
+}
+
+.card-actions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.card-actions .btn-light {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+}
+
+.card-actions .btn-danger {
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+}
+
+.dragging {
+  opacity: 0.85;
+  transform: scale(1.05);
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Add a shadow during drag */
+}
+
+/* Styles for the Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.modal-content input[type="text"],
+.modal-content textarea,
+.modal-content select,
+.modal-content input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.modal-content textarea {
+  min-height: 100px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-actions .btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-actions .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.loader {
+  border: 3px solid #f3f3f3; /* Light grey */
+  border-top: 3px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  animation: spin 2s linear infinite;
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
