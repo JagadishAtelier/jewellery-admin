@@ -14,7 +14,7 @@ import {
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler);
 
 export default function GoldRateChart({ goldRateData }) {
-  const [range, setRange] = useState('7D'); // Default range is 7D
+  const [range, setRange] = useState('1D'); // Default range is 7D
 
   // Filter data based on selected range (1D or 7D)
   const sortedData = [...goldRateData].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -30,13 +30,14 @@ const filteredData = range === '1D'
         label: '18k Gold Rate (₹)',
         data: [],
         borderColor: '#6366f1',
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
-          gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
-          return gradient;
-        },
+         backgroundColor: 'transparent',
+        // backgroundColor: (context) => {
+        //   const ctx = context.chart.ctx;
+        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        //   gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+        //   gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
+        //   return gradient;
+        // },
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -49,13 +50,14 @@ const filteredData = range === '1D'
         label: '22k Gold Rate (₹)',
         data: [],
         borderColor: '#f97316',
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
-          gradient.addColorStop(1, 'rgba(249, 115, 22, 0.05)');
-          return gradient;
-        },
+         backgroundColor: 'transparent',
+        // backgroundColor: (context) => {
+        //   const ctx = context.chart.ctx;
+        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        //   gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+        //   gradient.addColorStop(1, 'rgba(249, 115, 22, 0.05)');
+        //   return gradient;
+        // },
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -68,13 +70,14 @@ const filteredData = range === '1D'
         label: '24k Gold Rate (₹)',
         data: [],
         borderColor: '#16a34a',
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, 'rgba(22, 163, 74, 0.4)');
-          gradient.addColorStop(1, 'rgba(22, 163, 74, 0.05)');
-          return gradient;
-        },
+        backgroundColor: 'transparent',
+        // backgroundColor: (context) => {
+        //   const ctx = context.chart.ctx;
+        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        //   gradient.addColorStop(0, 'rgba(22, 163, 74, 0.4)');
+        //   gradient.addColorStop(1, 'rgba(22, 163, 74, 0.05)');
+        //   return gradient;
+        // },
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -126,7 +129,7 @@ const filteredData = range === '1D'
         display: true,
         labels: {
           color: '#6b7280',
-          font: { size: 12, weight: '500' },
+          font: { size: 10, weight: '500' },
           boxWidth: 12,
         },
       },
@@ -145,7 +148,7 @@ const filteredData = range === '1D'
         ticks: {
           color: '#6b7280',
           font: { size: 10 },
-          maxRotation: 45,
+          maxRotation: 0,
           autoSkip: true,
           maxTicksLimit: 10,
         },
@@ -157,7 +160,7 @@ const filteredData = range === '1D'
         beginAtZero: false,
         ticks: {
           color: '#6b7280',
-          font: { size: 12 },
+          font: { size: 10 },
           callback: (value) => `₹${value.toLocaleString()}`, 
         },
         grid: {
@@ -168,7 +171,7 @@ const filteredData = range === '1D'
   };
 
   return (
-    <div className="card shadow-sm p-3 mb-4 border-0" style={{ height: '340px' }}>
+    <div className=" p-3 mb-4 " style={{ height: '340px' }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         {/* <h5 className="text-secondary">Gold Rate</h5> */}
         <div className="btn-group">
@@ -176,7 +179,7 @@ const filteredData = range === '1D'
           <button onClick={() => setRange('7D')} className={`btn btn-sm ${range === '7D' ? 'btn-primary' : 'btn-outline-primary'}`}>7D</button>
         </div>
       </div>
-      <div style={{ height: '280px' }}>
+      <div style={{ height: '300px' }}>
         <Line data={chartData} options={options} />
       </div>
     </div>

@@ -22,19 +22,20 @@ export default function SalesChart({ data }) {
         label: 'Total Sales (₹)',
         // Data for the y-axis (sales amount)
         data: data.map(entry => entry.amount),
-        borderColor: '#6366f1', // Indigo-500
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');   // Indigo-500
-          gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
-          return gradient;
-        },
+        borderColor: '#C7A718', // Indigo-500
+        backgroundColor: 'transparent',
+        //  backgroundColor: (context) => {
+        //   const ctx = context.chart.ctx;
+        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        //   gradient.addColorStop(0, 'rgba(217, 163, 0, 0.87)');   // Indigo-500
+        //   gradient.addColorStop(1, 'rgba(222, 188, 38, 0.23)');
+        //   return gradient;
+        // }
         tension: 0.4,
         fill: true,
         pointRadius: 5,
         pointHoverRadius: 7,
-        pointBackgroundColor: '#6366f1',
+        pointBackgroundColor: '#C7A720',
         pointBorderWidth: 1,
         pointBorderColor: '#fff',
       },
@@ -54,11 +55,11 @@ export default function SalesChart({ data }) {
         },
       },
       tooltip: {
-        backgroundColor: '#111827', // Gray-900
-        titleColor: '#fff',
-        bodyColor: '#d1d5db', // Gray-300
+        backgroundColor: '#201d27', // Gray-900
+        titleColor: '#f1f1f1',
+        bodyColor: '#f8f8f8', // Gray-300
         cornerRadius: 4,
-        padding: 12,
+        padding: 15,
         borderColor: '#374151',
         borderWidth: 1,
       },
@@ -66,31 +67,30 @@ export default function SalesChart({ data }) {
     scales: {
       x: {
         ticks: {
-          color: '#6b7280',
-          font: { size: 12 },
+          color: '#9f7800',
+          font: { size: 8 },
         },
         grid: {
-          color: 'rgba(107, 114, 128, 0.1)', // subtle x grid
+          color: 'rgba(107, 114, 128, 0.2)', // subtle x grid
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#6b7280',
-          font: { size: 12 },
+          color: '#9f7800',
+          font: { size: 9 },
           callback: (value) => `₹${value.toLocaleString()}`, // Format y-axis as ₹
         },
         grid: {
-          color: 'rgba(107, 114, 128, 0.1)', // subtle y grid
+          color: 'rgba(107, 114, 128, 0.2)', // subtle y grid
         },
       },
     },
   };
 
   return (
-    <div className="card shadow-sm p-3 mb-4 border-0" style={{ height: '340px' }}>
-      <h5 className="text-secondary mb-3">Sales Trend</h5>
-      <div style={{ height: '280px' }}>
+    <div className="p-3 border-0" style={{ height: '340px' }}>
+      <div style={{ height: '300px' }}>
         <Line data={chartData} options={options} />
       </div>
     </div>

@@ -1,75 +1,76 @@
-import React, { useEffect, useMemo } from 'react';
-import useGoldRateContext from '../hooks/useGoldRateContext';
 import UserImage from '../assets/user.jpg';
 import { FiMenu } from 'react-icons/fi';
+import { BiBell } from 'react-icons/bi'; // Notification icon
+import { BsSun } from 'react-icons/bs'; // Theme toggle placeholder
+import SearchBar from './SearchBar';
 
 const Navbar = ({ toggleSidebar }) => {
-  const { rates, loading, fetchRates } = useGoldRateContext();
-
   const today = new Date();
-  const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
 
-  const updatedAt = useMemo(() => {
-    return rates['24k']?.updatedAt ? new Date(rates['24k'].updatedAt) : null;
-  }, [rates]);
+// Helper to get ordinal suffix (st, nd, rd, th)
+const getOrdinalSuffix = (day) => {
+  if (day > 3 && day < 21) return `${day}th`;
+  switch (day % 10) {
+    case 1: return `${day}st`;
+    case 2: return `${day}nd`;
+    case 3: return `${day}rd`;
+    default: return `${day}th`;
+  }
+};
 
-  const lastUpdatedStr = updatedAt
-    ? updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : '-';
+const dayName = today.toLocaleDateString('en-GB', { weekday: 'long' }); // e.g., "Friday"
+const monthName = today.toLocaleDateString('en-GB', { month: 'long' });  // e.g., "May"
+const dayWithSuffix = getOrdinalSuffix(today.getDate());
+const year = today.getFullYear();
 
-  const nextInMinutes = updatedAt
-    ? 60 - (Math.floor((new Date() - updatedAt) / (1000 * 60)) % 60)
-    : null;
+const formattedDate = `${dayName} ${dayWithSuffix} ${monthName} ${year}`;
 
-  // Auto-refresh when next update hits 0 mins
-  useEffect(() => {
-    if (!updatedAt) return;
+console.log(formattedDate); // ➜ "Friday 16th May 2025"
 
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = Math.floor((now - updatedAt) / (1000 * 60));
-      const remaining = 60 - (diff % 60);
 
-      if (remaining <= 0) {
-        fetchRates(); // Fetch new gold rates
-      }
-    }, 10000); // check every 10 seconds
-
-    return () => clearInterval(interval);
-  }, [updatedAt, fetchRates]); 
   return (
-    <nav className="rounded bg-white mb-3 p-3 d-flex justify-content-between align-items-center">
-      <div className="d-flex align-items-center">
-        <button className="btn btn-outline-primary me-3 d-md-none" onClick={toggleSidebar}>
-          <FiMenu size={20} />
-        </button>
+    <nav className="navbar navbar-expand-lg bg-transprent px-4 py-3">
+      <div className="d-flex align-items-center w-100 justify-content-between">
 
-        {!loading ? (
-          <div className="text-muted small fw-semibold d-flex flex-wrap align-items-center">
-            <div className="me-2">Gold Price:</div>
-            <div className="me-3">24k: <span className="text-primary">₹{rates['24k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
-            <div className="me-3">22k: <span className="text-primary">₹{rates['22k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
-            <div className="me-3">18k: <span className="text-primary">₹{rates['18k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
-            <div className="me-3 text-secondary">Last updated: <span className='text-primary fw-bold'>{lastUpdatedStr}</span></div>
-            <div className="text-secondary">
-              Next update in: <span className='text-primary fw-bold'>{nextInMinutes !== null ? `${nextInMinutes} min${nextInMinutes !== 1 ? 's' : ''}` : '-'}</span>
+        {/* Left Section: Sidebar toggle + Rates */}
+        <div className="d-flex align-items-center gap-3 flex-wrap">
+          <button
+            className="btn btn-light border d-md-none"
+            onClick={toggleSidebar}
+          >
+            <FiMenu size={20} />
+          </button>
+          <SearchBar/>
+        </div>
+
+        {/* Right Section: Date, Icons, User */}
+        <div className="d-flex align-items-center gap-3">
+          <div className="small text-muted d-none d-md-block">
+            <i className='bi-calendar3 me-1 fw-medium'></i>
+            <span className="text-muted fw-medium">{formattedDate}</span>
+          </div>
+          <button className="btn  py-2">
+            <BiBell size={20} /> <span style={{position:"absolute", top:"25%",fontSize:'10px', padding:'.2rem .3rem'}} className='small text-light rounded-pill bg-dark'>10</span>
+          </button>
+{/* 
+          <button className="btn btn-light rounded-circle shadow-sm py-2 d-none d-md-inline">
+            <BsSun size={18} />
+          </button> */}
+
+          <div className="d-flex align-items-center gap-2">
+            <img
+              src={UserImage}
+              alt="User"
+              className="rounded-circle border"
+              style={{ width: '32px', height: '32px', objectFit: 'cover' }}
+            />
+            <div className="d-none d-md-block">
+              <div className="fw-semibold small">Prasanth</div>
+              <div className="text-muted small">Admin</div>
             </div>
           </div>
-        ) : (
-          <div className="text-muted small">Loading gold rates...</div>
-        )}
-      </div>
-
-      <div className="d-flex align-items-center gap-2">
-        <div className="small text-muted fw-bold d-none d-md-block">
-          Date: <span className="text-primary me-3">{formattedDate}</span>
         </div>
-        <img
-          src={UserImage}
-          alt="User"
-          className="rounded-circle"
-          style={{ width: '30px', height: '30px', objectFit: 'cover' }}
-        />
+
       </div>
     </nav>
   );

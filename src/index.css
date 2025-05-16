@@ -1,14 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 h1,h2,h3 {
-  font-family: "Montserrat", serif !important;
-  font-weight: 400;
+  font-family: "Jost", sans-serif !important;
+  font-weight: 200;
   font-style: normal;
 }
 h4,h5,h6,p,a,label,button{
-  font-family: "Montserrat", sans-serif !important;
+ font-family: "Jost", sans-serif !important;
 }
-
+body {
+  background: #f8f9fd;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+.fw-bold{
+  font-weight: 600 !important;
+}
 ::placeholder {
     color: rgba(108, 117, 125, 0.6); 
   }
@@ -161,3 +168,104 @@ h4,h5,h6,p,a,label,button{
 .mt-6{
   margin-top: 4.5rem !important;
 }
+/* In App.css or scoped CSS */
+.navbar {
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar .btn-light {
+  background-color: #f4f4f4;
+}
+
+.card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+}
+
+.nav-pills .nav-link {
+  border-radius: 50px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #feeec0 !important;
+  --bs-bg-opacity: 0.25;
+  color: #000;
+}
+.metric-card {
+  flex-grow: 1;
+  flex-basis: auto;
+  min-width: fit-content;
+  max-width: 100%;
+}
+
+.metric-card .card {
+  width: 100%;
+  white-space: nowrap; /* Prevent wrapping if needed */
+}
+.card-body{
+  border: none !important;
+}
+.text-warning{
+  color: #dab765 !important;
+}
+.bg-primary{
+  background-color: #dab765 !important;
+}
+.btn-primary{
+  background-color: #dab765 !important;
+  border-color: #dab765 !important;
+}
+.btn-outline-primary{
+color: #dab765 !important;
+border-color: #dab765 !important;
+}
+.btn-outline-primary:hover{
+    background-color: #ffe6ac !important;
+    color: #333 !important;
+     border-color: #dab765 !important;
+}
+.form-control,.form-select {
+  border-radius: 9px !important; /* Customize the radius */
+  padding-bottom: .6rem !important;
+  padding-top: .6rem !important;
+  border-color: #dbcdac57 !important;
+}
+.form-select{
+  cursor: pointer;
+}
+.form-control:focus,.form-select:focus{
+    border-color: #dab76557 !important;
+    box-shadow: none !important;
+}
+.form-control input[type="file"] {
+  color: red !important;
+}
+
+/* table */
+
+
+.table-header-row th {
+  background-color: #f5e7b9;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table-row {
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: #f5e7b9;
+}
+
+.modern-table td, .modern-table th {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* table end */

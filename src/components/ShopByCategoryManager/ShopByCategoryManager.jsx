@@ -8,6 +8,7 @@ import {
     deleteCategory,
 } from '../../api/categoryApi.js';
 import { showUndoToast } from "../../utils/toast.jsx";
+import ModernTable from '../../components/ModernTable/ModernTable.jsx'; // adjust path if different
 
 Modal.setAppElement('#root');
 
@@ -31,7 +32,7 @@ const ShopByCategoryManager = () => {
         heightClass: '',
         image: null,
     });
-    const [imagePreview, setImagePreview] = useState(null); // State for image preview
+    const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef();
 
     useEffect(() => {
@@ -57,16 +58,16 @@ const ShopByCategoryManager = () => {
             description: cat?.description || '',
             bgClass: cat?.bgClass || '',
             heightClass: cat?.heightClass || '',
-            image: null, // Reset image if editing an existing category
+            image: null,
         });
-        setImagePreview(cat?.imageUrl || null); // Set the preview image if editing
+        setImagePreview(cat?.imageUrl || null);
         setModalOpen(true);
     };
 
     const closeModal = () => {
         setEditCat(null);
         setModalOpen(false);
-        setImagePreview(null); // Clear preview when closing the modal
+        setImagePreview(null);
     };
 
     const handleDelete = (id) => {
@@ -75,9 +76,7 @@ const ShopByCategoryManager = () => {
 
         if (!window.confirm(`Are you sure you want to delete "${itemToDelete.name}"?`)) return;
 
-        // Optimistically remove the item
         setCategories(prev => prev.filter(c => c._id !== id));
-
         let undone = false;
 
         showUndoToast(
@@ -88,7 +87,6 @@ const ShopByCategoryManager = () => {
             }
         );
 
-        // After 5s (same as toast duration), call confirm if not undone
         setTimeout(async () => {
             if (!undone) {
                 try {
@@ -109,6 +107,7 @@ const ShopByCategoryManager = () => {
         form.append('name', formData.name);
         form.append('description', formData.description);
         form.append('bgClass', formData.bgClass);
+        form.append('heightClass', formData.heightClass);
         if (fileInputRef.current.files[0]) {
             form.append('image', fileInputRef.current.files[0]);
         }
@@ -134,10 +133,7 @@ const ShopByCategoryManager = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleImageChange = (e) => {
@@ -145,12 +141,42 @@ const ShopByCategoryManager = () => {
         if (file) {
             setFormData({ ...formData, image: file });
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result); // Set the image preview
-            };
+            reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
         }
     };
+
+    const headers = ['Name', 'Description', 'Background', 'Image', 'Actions'];
+    const rows = categories.map(cat => [
+        cat.name,
+        cat.description,
+        <span
+            style={{
+                backgroundColor: bgClassOptions.find(b => b.value === cat.bgClass)?.color,
+                padding: '8px',
+                borderRadius: '4px',
+                color: 'white',
+            }}
+        >
+            {cat.bgClass}
+        </span>,
+        cat.imageUrl ? <img src={cat.imageUrl} alt={cat.name} width="60" style={{ borderRadius: "4px" }} /> : '',
+        <div className="d-flex justify-content-center align-items-center">
+            <button
+                className="btn btn-sm btn-warning me-2"
+                style={{ color: "white" }}
+                onClick={() => openModal(cat)}
+            >
+                <i className="bi bi-pencil-fill"></i> Edit
+            </button>
+            <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDelete(cat._id)}
+            >
+                <i className="bi bi-trash-fill"></i> Delete
+            </button>
+        </div>
+    ]);
 
     if (loading) return <p>Loading categories…</p>;
     if (error) return <p className="text-danger">{error}</p>;
@@ -163,176 +189,111 @@ const ShopByCategoryManager = () => {
                     + Add Category
                 </button>
             </div>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Background</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categories.map(cat => (
-                        <tr key={cat._id}>
-                            <td className='align-content-center'>{cat.name}</td>
-                            <td className='align-content-center'>{cat.description}</td>
-                            <td className='align-content-center'>
-                                <span
-                                    style={{
-                                        backgroundColor: bgClassOptions.find(b => b.value === cat.bgClass)?.color,
-                                        padding: '8px 8px',
-                                        borderRadius: '4px',
-                                        color: 'white',
-                                    }}
-                                >
-                                    {cat.bgClass}
-                                </span>
-                            </td>
-                            <td className='align-content-center'>
-                                {cat.imageUrl && (
-                                    <img src={cat.imageUrl} alt={cat.name} width="60" style={{borderRadius:"4px"}}/>
-                                )}
-                            </td>
-                            <td className='align-content-center'>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button
-                                    className="btn btn-sm btn-warning me-2"
-                                    style={{color:"white"}}
-                                    onClick={() => openModal(cat)}
-                                >
-                                  <i className="bi bi-pencil-fill"></i> Edit
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleDelete(cat._id)}
-                                >
-                                  <i className="bi bi-trash-fill"></i> Delete
-                                </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-           
+
+            <ModernTable headers={headers} rows={rows} />
 
             <Modal
-            isOpen={modalOpen}
-            onRequestClose={closeModal}
-            className="modal-content"
-            overlayClassName="modal-overlay"
-        >
-            <h3>{editCat ? 'Edit Category' : 'New Category'}</h3>
-            <form onSubmit={handleSubmit}>
-                <div className="row">
-                    {/* Left Column */}
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <label>Name<span style={{color: "#c70000",fontSize: "10px",marginLeft: "5px"}}>*Required</span></label>
-                            <input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                                className="form-control"
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label>Description</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                className="form-control"
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label>Background Class</label>
-                            <select
-                                name="bgClass"
-                                value={formData.bgClass}
-                                onChange={handleInputChange}
-                                required
-                                className="form-control"
-                            >
-                                <option value="" disabled>Select Background</option>
-                                {bgClassOptions.map(({ value, color }) => (
-                                    <option key={value} value={value} style={{ backgroundColor: color,color:"white" }}>
-                                        {value}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Right Column */}
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <label>Height Class</label>
-                            <select
-                                name="heightClass"
-                                value={formData.heightClass}
-                                onChange={handleInputChange}
-                                className="form-control"
-                            >
-                                <option value="h-50">50% Height</option>
-                                <option value="card-h-33">33% Height</option>
-                                <option value="card-h-66">66% Height</option>
-                                <option value="h-30">30% Height</option>
-                            </select>
-                        </div>
-
-                        <div className="mb-3">
-                            <label>Image</label>
-                            <input
-                                type="file"
-                                name="image"
-                                accept="image/*"
-                                ref={fileInputRef}
-                                onChange={handleImageChange}
-                                className="form-control"
-                            />
-                        </div>
-
-                        {/* Image Preview */}
-                        {imagePreview && (
-                            <div className="mt-2">
-                                <p>Image Preview:</p>
-                                <img
-                                    src={imagePreview}
-                                    alt="Image Preview"
-                                    width="100"
-                                    style={{ maxWidth: '100%',borderRadius:"5px" }}
+                isOpen={modalOpen}
+                onRequestClose={closeModal}
+                className="modal-content"
+                overlayClassName="modal-overlay"
+            >
+                <h3>{editCat ? 'Edit Category' : 'New Category'}</h3>
+                <form onSubmit={handleSubmit}>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <label>Name<span className="text-danger small ms-1">*Required</span></label>
+                                <input
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-control"
                                 />
                             </div>
-                        )}
+
+                            <div className="mb-3">
+                                <label>Description</label>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                />
+                            </div>
+
+                            <div className="mb-3">
+                                <label>Background Class</label>
+                                <select
+                                    name="bgClass"
+                                    value={formData.bgClass}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-control"
+                                >
+                                    <option value="" disabled>Select Background</option>
+                                    {bgClassOptions.map(({ value, color }) => (
+                                        <option key={value} value={value} style={{ backgroundColor: color, color: "white" }}>
+                                            {value}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <label>Height Class</label>
+                                <select
+                                    name="heightClass"
+                                    value={formData.heightClass}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                >
+                                    <option value="h-50">50% Height</option>
+                                    <option value="card-h-33">33% Height</option>
+                                    <option value="card-h-66">66% Height</option>
+                                    <option value="h-30">30% Height</option>
+                                </select>
+                            </div>
+
+                            <div className="mb-3">
+                                <label>Image</label>
+                                <input
+                                    type="file"
+                                    name="image"
+                                    accept="image/*"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    className="form-control"
+                                />
+                            </div>
+
+                            {imagePreview && (
+                                <div className="mt-2">
+                                    <p>Image Preview:</p>
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        width="100"
+                                        style={{ borderRadius: "5px" }}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <div className="modal-actions mt-3">
-                    <button
-                        type="button"
-                        onClick={closeModal}
-                        className="btn btn-secondary"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={submitting}
-                    >
-                        {submitting ? 'Saving...' : editCat ? 'Update' : 'Create'}
-                    </button>
-                </div>
-            </form>
-        </Modal>
-
-
+                    <div className="modal-actions mt-3">
+                        <button type="button" onClick={closeModal} className="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary" disabled={submitting}>
+                            {submitting ? 'Saving...' : editCat ? 'Update' : 'Create'}
+                        </button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 };

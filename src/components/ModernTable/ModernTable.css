@@ -1,0 +1,59 @@
+/* ResponsiveTable.css */
+.modern-table {
+  border-radius: 12px;
+  overflow: hidden; 
+  border: 1px solid #a39578;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.modern-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px !important;
+  border: none;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+.th{
+    border-style:none !important;
+}
+
+.modern-table thead.table-header th {
+  background-color: #f5e7b9;
+  color: #333;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px;
+  border-bottom: 2px solid #e2d5aa;
+  border-right: 1px solid #a39578;
+  text-transform: uppercase;
+}
+
+.modern-table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.modern-table tbody tr:hover {
+    --bs-table-bg: transprent !important;
+    color: #333 !important;
+    --bs-table-hover-bg: transprent !important;
+  background-color: #fcf4d9 !important;
+}
+
+.modern-table tbody td {
+  padding: 12px 14px;
+  font-size: 14px;
+   border-right: 1px solid #a39578;
+  color: #4b5563;
+  border-top: 1px solid #a39578;
+}
+.modern-table td:last-child{
+    border-right: none !important;
+}
+.modern-table th:first-child{
+  border-top-left-radius: 8px;
+}
+
+.modern-table th:last-child {
+  border-top-right-radius: 8px;
+}

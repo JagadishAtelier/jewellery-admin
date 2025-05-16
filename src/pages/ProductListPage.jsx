@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { showUndoToast } from "../utils/toast.jsx";
 import toast from 'react-hot-toast';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import ModernTable from "../components/ModernTable/ModernTable.jsx"; // ✅ Import ModernTable
 
 const itemsPerPage = 5;
 
@@ -115,6 +116,32 @@ export default function ProductListPage() {
     pageNumbers.push(i);
   }
 
+  const headers = ["Product ID", "Category", "Name", "Karat", "Weight", "Actions"];
+  const rows = currentProducts.map((p) => [
+    p.productid,
+    getCategoryName(p.categoryId),
+    p.name,
+    p.karat,
+    `${p.weight}g`,
+    (
+      <div className="d-flex justify-content-center align-items-center">
+        <button
+          className="btn btn-sm btn-warning me-2"
+          style={{ color: "white" }}
+          onClick={() => navigate(`/edit-product/${p._id}`)}
+        >
+          <i className="bi bi-pencil-fill"></i> Edit
+        </button>
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => handleDelete(p._id)}
+        >
+          <i className="bi bi-trash-fill"></i> Delete
+        </button>
+      </div>
+    )
+  ]);
+
   return (
     <div className="container mt-4 bg-white p-4 rounded shadow">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -126,19 +153,18 @@ export default function ProductListPage() {
 
       <div className="mb-3 row">
         <div className="col-md-6 mb-2">
-          <div className="input-group">
-            <span className="input-group-text" id="search-icon">
-              <i className="bi bi-search"></i>
-            </span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by Product ID"
-              value={searchTerm}
-              onChange={handleSearch}
-              aria-describedby="search-icon"
-            />
-          </div>
+          <div className="input-group rounded-pill overflow-hidden">
+          <span className="input-group-text bg-white border-0">
+            <i className="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by Product ID"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
         </div>
 
         <div className="col-md-6 mb-2">
@@ -164,52 +190,11 @@ export default function ProductListPage() {
           </div>
           <span className="ms-2">Loading products...</span>
         </div>
-      ) : currentProducts.length === 0 && searchTerm ? (
-        <p>No products found with Product ID: {searchTerm}</p>
       ) : currentProducts.length === 0 ? (
-        <p>No products available.</p>
+        <p>No products {searchTerm ? `found with Product ID: ${searchTerm}` : 'available'}.</p>
       ) : (
         <>
-          <table className="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th>Product ID</th>
-                <th>Category</th>
-                <th>Name</th>
-                <th>Karat</th>
-                <th>Weight</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentProducts.map((p) => (
-                <tr key={p._id}>
-                  <td>{p.productid}</td>
-                  <td>{getCategoryName(p.categoryId)}</td>
-                  <td>{p.name}</td>
-                  <td>{p.karat}</td>
-                  <td>{p.weight}g</td>
-                  <td>
-                    <div className="d-flex justify-content-center align-items-center">
-                      <button
-                        className="btn btn-sm btn-warning me-2"
-                        style={{ color: "white" }}
-                        onClick={() => navigate(`/edit-product/${p._id}`)}
-                      >
-                        <i className="bi bi-pencil-fill"></i> Edit
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(p._id)}
-                      >
-                        <i className="bi bi-trash-fill"></i> Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ModernTable headers={headers} rows={rows} /> {/* ✅ Use ModernTable */}
 
           <nav aria-label="Product pagination">
             <ul className="pagination justify-content-center">
