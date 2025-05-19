@@ -33,8 +33,16 @@ const GoldRatesDisplay = () => {
   }, [updatedAt, fetchRates]);
 
   if (loading) {
-    return <div className="small text-muted">Loading gold rates...</div>;
-  }
+  return (
+    <div className="d-flex justify-content-center align-items-center py-3">
+      <div className="spinner-border text-warning" role="status" style={{ width: "1.5rem", height: "1.5rem" }}>
+        <span className="visually-hidden">Loading...</span>
+      </div>
+      <span className="ms-2 small text-muted">Fetching live gold rates...</span>
+    </div>
+  );
+}
+
 
   return (
    <div className="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 align-items-center small text-muted fw-medium text-center text-md-start">
