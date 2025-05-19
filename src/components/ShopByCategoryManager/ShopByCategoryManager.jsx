@@ -182,10 +182,10 @@ const ShopByCategoryManager = () => {
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
-        <div className="container mt-4 bg-white p-4 rounded shadow">
+        <div className="container my-4 bg-white p-4 rounded-4 shadow">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className='fw-bold'>Categories</h2>
-                <button onClick={() => openModal()} className="btn btn-primary">
+                <h2 className='fw-bold me-sm-2 responsive-heading'>Categories</h2>
+                <button onClick={() => openModal()} className="btn btn-primary btn-sm btn-sm-none">
                     + Add Category
                 </button>
             </div>

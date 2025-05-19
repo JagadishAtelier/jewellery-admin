@@ -15,12 +15,11 @@ export default function TargetCard({
   const remaining = 100 - percentage;
 
   return (
-    <div className="targe-card bg-white border-0 shadow-sm p-4 rounded-4" style={{  height:" -webkit-fill-available"}}
->
+    <div className="target-card bg-white border-0 shadow-sm p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
       <h6 className="fw-bold mb-1">Target</h6>
       <p className="text-muted small mb-3">Revenue Target / Today</p>
 
-      <div style={{ width: 250, margin: "0 auto" }} className="mb-3">
+      <div style={{ maxWidth: 250, width: '100%', margin: "0 auto" }} className="mb-3 flex-shrink-0">
         <CircularProgressbarWithChildren
           value={percentage}
           strokeWidth={7}
@@ -42,7 +41,7 @@ export default function TargetCard({
         </CircularProgressbarWithChildren>
       </div>
 
-      <p className="text-center small mb-4">
+      <p className="text-center small mb-4 flex-grow-1">
         You succeeded to earn <strong>₹ {sells}M</strong> today,
         <br />
         Current Sells Revenue is <strong>{percentage.toFixed(0)}%</strong>!
@@ -71,3 +70,4 @@ export default function TargetCard({
     </div>
   );
 }
+

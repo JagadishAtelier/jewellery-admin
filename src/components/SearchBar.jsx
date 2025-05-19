@@ -1,8 +1,8 @@
-import { BiSearch } from "react-icons/bi"; // Or use Bootstrap icon: <i className="bi bi-search"></i>
+import { BiSearch } from "react-icons/bi";
 
 export default function SearchBar() {
   return (
-    <div className="input-group bg-light rounded" style={{ maxWidth: 440 }}>
+    <div className="input-group bg-light rounded w-100" style={{ maxWidth: '400px', width: '100%' }}>
       <span className="input-group-text bg-transparent border-0">
         <BiSearch className="text-muted" />
       </span>
@@ -13,8 +13,8 @@ export default function SearchBar() {
         style={{
           boxShadow: "none",
           backgroundColor: "#f8f9fa",
-          width:"400px",
-          height:"auto"
+          minWidth: "0",
+          width: "100%",
         }}
       />
     </div>

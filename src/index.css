@@ -8,6 +8,16 @@ h1,h2,h3 {
 h4,h5,h6,p,a,label,button{
  font-family: "Jost", sans-serif !important;
 }
+.responsive-heading {
+  font-size: 2rem; /* default for desktop (fs-4/5) */
+}
+
+@media (max-width: 576px) {
+  .responsive-heading {
+    font-size: 1.25rem; /* mobile size (fs-6) */
+  }
+}
+
 body {
   background: #f8f9fd;
   font-family: 'Inter', sans-serif;
@@ -237,6 +247,9 @@ border-color: #dab765 !important;
   padding-top: .6rem !important;
   border-color: #dbcdac57 !important;
 }
+.input-group {
+  flex-wrap: nowrap !important;
+}
 .form-select{
   cursor: pointer;
 }
@@ -269,3 +282,64 @@ border-color: #dab765 !important;
   white-space: nowrap;
 }
 /* table end */
+
+/* map */
+.country {
+  fill: #ececec;
+  stroke: black;
+  stroke-width: 0.2;
+  transition: fill 0.3s ease;
+}
+
+.country.highlighted {
+  fill: #f39c12; /* Highlight color */
+  stroke: #c0392b;
+  stroke-width: 1;
+}
+@media (max-width: 576px) {
+  .map-container {
+    height: 180px !important;
+  }
+}
+
+/* map end */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1050;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 720px;
+  padding: 1.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  position: relative;
+}
+
+/* Responsive Column Adjustments */
+@media (max-width: 767.98px) {
+  .modal-content .row > .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

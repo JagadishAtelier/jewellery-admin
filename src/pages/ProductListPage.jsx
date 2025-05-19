@@ -143,10 +143,10 @@ export default function ProductListPage() {
   ]);
 
   return (
-    <div className="container mt-4 bg-white p-4 rounded shadow">
+    <div className="container my-4 bg-white p-4 rounded-4 shadow">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold">Product List</h2>
-        <button className="btn btn-primary me-2" onClick={() => navigate(`/add-product`)}>
+        <h2 className="fw-bold responsive-heading">Product List</h2>
+        <button className="btn btn-primary btn-sm btn-sm-none" onClick={() => navigate(`/add-product`)}>
           + Add Product
         </button>
       </div>
