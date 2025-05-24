@@ -345,4 +345,14 @@ border-color: #dab765 !important;
     flex-direction: column;
     gap: 0.5rem;
   }
+  .footer{
+    margin: 0 !important;
+    bottom: 0 !important;
+  }
+}
+/* paddingLeft: "1rem", paddingRight: "1rem",marginLeft:'240px' */
+.footer{
+padding-left: 1rem;
+padding-right: 1rem;
+margin-left: 240px;
 }
