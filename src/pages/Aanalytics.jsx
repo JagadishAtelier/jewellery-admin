@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SalesChart from "../components/SalesChart";
-import { fetchDashboardSummary } from "../api/analyticsApi";
+import { fetchDashboardSummary, MetalrateTrends } from "../api/analyticsApi";
 import { getAllUsers } from "../api/userApi"; // Import your API call for users
 import moment from "moment";
 import { FaCoins, FaFileAlt, FaGem } from "react-icons/fa";
@@ -9,7 +9,7 @@ import GoldRateChart from "../components/GoldrateChart";
 import TargetCard from "../components/TargetCard";
 import ModernTable from "../components/ModernTable/ModernTable";
 import { BusinessGrowthCard } from "../components/BusinessGrowthCard";
-import axios from "axios";
+
 
 export default function AdminDashboard() {
   const [summary, setSummary] = useState(null);
@@ -26,9 +26,7 @@ export default function AdminDashboard() {
     const fetchTrends = async () => {
       setLoading(true); // ⏳ Start loading
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/rates/all-trends"
-        );
+        const res = await MetalrateTrends()
         const { gold, silver, platinum } = res.data;
 
         const formatTrendData = (metalArray) => {
