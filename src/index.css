@@ -12,6 +12,9 @@ h4,h5,h6,p,a,label,button{
   font-size: 2rem; /* default for desktop (fs-4/5) */
 }
 
+.w-30 {
+    width: 30% !important;
+}
 @media (max-width: 576px) {
   .responsive-heading {
     font-size: 1.25rem; /* mobile size (fs-6) */

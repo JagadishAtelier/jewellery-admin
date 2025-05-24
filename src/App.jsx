@@ -8,6 +8,7 @@ import AddProduct from "./pages/AddProduct";
 import ShopByCategoryManager from "./components/ShopByCategoryManager/ShopByCategoryManager";
 import { Toaster } from "react-hot-toast";
 import Aanalytics from "./pages/Aanalytics";
+import MetalManager from "./pages/MetalManager";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Aanalytics />} />
           <Route path="category" element={<ShopByCategoryManager />} />
+          <Route path="MetalManager" element={<MetalManager />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="allproduct" element={<ProductListPage />} />
           <Route path="edit-product/:id" element={<EditProduct />} />

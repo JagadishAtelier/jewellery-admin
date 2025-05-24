@@ -12,7 +12,6 @@ export const Footer = () => {
         © {new Date().getFullYear()} Jewelry. All rights reserved to{" "}
         <a href="#" className="text-decoration-none">Atelier</a>.
       </small>
-
     </footer>
   );
 };

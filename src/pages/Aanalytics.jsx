@@ -1,22 +1,63 @@
 import { useEffect, useState } from "react";
 import SalesChart from "../components/SalesChart";
-import { fetchDashboardSummary, getGoldRatesTrends } from "../api/analyticsApi";
+import { fetchDashboardSummary } from "../api/analyticsApi";
 import { getAllUsers } from "../api/userApi"; // Import your API call for users
 import moment from "moment";
-import { FaFileAlt } from "react-icons/fa";
+import { FaCoins, FaFileAlt, FaGem } from "react-icons/fa";
 import { AiFillGolden } from "react-icons/ai";
 import GoldRateChart from "../components/GoldrateChart";
 import TargetCard from "../components/TargetCard";
 import ModernTable from "../components/ModernTable/ModernTable";
 import { BusinessGrowthCard } from "../components/BusinessGrowthCard";
+import axios from "axios";
 
 export default function AdminDashboard() {
   const [summary, setSummary] = useState(null);
   const [activeTab, setActiveTab] = useState("sales");
   const [activeSecTab, setActiveSecTab] = useState("recentSales");
-  const [goldRateData, setGoldRateData] = useState(null);
   const [searchId, setSearchId] = useState("");
   const [users, setUsers] = useState([]); // State to store user data
+  const [goldRateData, setGoldRateData] = useState([]);
+  const [silverRateData, setSilverRateData] = useState([]);
+  const [platinumRateData, setPlatinumRateData] = useState([]);
+  const [loading, setLoading] = useState(true); // 🔁 Loader state
+
+  useEffect(() => {
+    const fetchTrends = async () => {
+      setLoading(true); // ⏳ Start loading
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/rates/all-trends"
+        );
+        const { gold, silver, platinum } = res.data;
+
+        const formatTrendData = (metalArray) => {
+          const result = [];
+          metalArray.forEach(({ date, rates }) => {
+            Object.entries(rates).forEach(([time, values]) => {
+              result.push({
+                timestamp: `${date} ${time}`,
+                "24k": values["24k"],
+                "22k": values["22k"],
+                "18k": values["18k"],
+              });
+            });
+          });
+          return result;
+        };
+
+        setGoldRateData(formatTrendData(gold));
+        setSilverRateData(formatTrendData(silver));
+        setPlatinumRateData(formatTrendData(platinum));
+      } catch (err) {
+        console.error("Failed to fetch metal trends:", err);
+      } finally {
+        setLoading(false); // ✅ Stop loading
+      }
+    };
+
+    fetchTrends();
+  }, []);
 
   const filteredUsers = searchId
     ? users.filter((u) => u._id.includes(searchId))
@@ -26,9 +67,6 @@ export default function AdminDashboard() {
     fetchDashboardSummary()
       .then((res) => setSummary(res.data))
       .catch((err) => console.error("Failed to fetch summary", err));
-    getGoldRatesTrends()
-      .then((res) => setGoldRateData(res.data)) // Set the gold rate data into state
-      .catch((err) => console.error("Failed to fetch gold rates", err));
 
     getAllUsers() // Fetch users when the component mounts
       .then((res) => setUsers(res.data.data)) // Assuming response data is in 'data'
@@ -36,8 +74,19 @@ export default function AdminDashboard() {
   }, []);
   console.log(goldRateData);
 
-  if (!summary || !goldRateData)
-    return <p className="text-center mt-5 fw-semibold">Loading dashboard...</p>;
+  if (!summary || !goldRateData || loading)
+    return (
+      <div className="d-flex justify-content-center align-items-center py-3">
+        <div
+          className="spinner-border text-warning"
+          role="status"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <span className="ms-2 small text-muted">Fetching Data...</span>
+      </div>
+    );
 
   function caltotalsales(recentsale) {
     var totalsaleAmount = 0;
@@ -72,7 +121,7 @@ export default function AdminDashboard() {
           value={8}
           percent={75.55}
           target={1.2}
-          iconClass="bi-cart-x-fill"
+          iconClass="bi-cart-check-fill"
         />
         <MetricCard
           title="Abandoned Carts"
@@ -114,6 +163,28 @@ export default function AdminDashboard() {
                     Gold Rate
                   </button>
                 </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "silverRate" ? "active" : ""
+                    }`}
+                    onClick={() => setActiveTab("silverRate")}
+                  >
+                    <FaCoins className="me-1" />
+                    Silver Rate
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "platinumRate" ? "active" : ""
+                    }`}
+                    onClick={() => setActiveTab("platinumRate")}
+                  >
+                    <FaGem className="me-1" />
+                    Platinum Rate
+                  </button>
+                </li>
               </ul>
             </div>
             <div className="card-body">
@@ -137,13 +208,36 @@ export default function AdminDashboard() {
               )}
 
               {/* Gold Rate Trend Tab */}
-              {activeTab === "goldRate" && (
+             {activeTab === "goldRate" && (
+                <div className="card">
+                  <div className="card-header bg-white fw-semibold">Gold Rate Trend</div>
+                  <div className="card-body">
+                    <GoldRateChart data={goldRateData} metalType="Gold" />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "silverRate" && (
                 <div className="card">
                   <div className="card-header bg-white fw-semibold">
-                    Gold Rate Trend
+                    Silver Rate Trend
                   </div>
                   <div className="card-body">
-                    <GoldRateChart goldRateData={goldRateData} />
+                    <GoldRateChart data={silverRateData} metalType="Silver" />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "platinumRate" && (
+                <div className="card">
+                  <div className="card-header bg-white fw-semibold">
+                    Platinum Rate Trend
+                  </div>
+                  <div className="card-body">
+                    <GoldRateChart
+                      data={platinumRateData}
+                      metalType="Platinum"
+                    />
                   </div>
                 </div>
               )}
@@ -255,35 +349,36 @@ export default function AdminDashboard() {
                 ))}
               {/* Users Tab */}
               {activeSecTab === "users" && (
-              <div className="card shadow-sm border-0 mb-4">
-  <div className="card-header bg-white fw-semibold d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-    <span>Users</span>
-    <input
-      type="text"
-      className="form-control form-control-sm w-100 w-md-auto"
-      placeholder="Search by User ID"
-      value={searchId}
-      onChange={(e) => setSearchId(e.target.value.trim())}
-    />
-  </div>
-  <div className="card-body">
-    {filteredUsers.length === 0 ? (
-      <EmptyState message="No users found." />
-    ) : (
-      <div className="table-responsive">
-        <ModernTable
-          headers={["User ID", "Phone", "Created At"]}
-          rows={filteredUsers.map((user) => [
-            user._id,
-            user.phone,
-            moment(user.createdAt).format("DD MMM YYYY, hh:mm A"),
-          ])}
-        />
-      </div>
-    )}
-  </div>
-</div>
-
+                <div className="card shadow-sm border-0 mb-4">
+                  <div className="card-header bg-white fw-semibold d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                    <span>Users</span>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm w-100 w-md-auto"
+                      placeholder="Search by User ID"
+                      value={searchId}
+                      onChange={(e) => setSearchId(e.target.value.trim())}
+                    />
+                  </div>
+                  <div className="card-body">
+                    {filteredUsers.length === 0 ? (
+                      <EmptyState message="No users found." />
+                    ) : (
+                      <div className="table-responsive">
+                        <ModernTable
+                          headers={["User ID", "Phone", "Created At"]}
+                          rows={filteredUsers.map((user) => [
+                            user._id,
+                            user.phone,
+                            moment(user.createdAt).format(
+                              "DD MMM YYYY, hh:mm A"
+                            ),
+                          ])}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -309,18 +404,46 @@ function formatIndianNumber(value) {
 function MetricCard({ title, value, unit, percent, target, iconClass }) {
   const isPositive = percent >= 0;
 
+  const [animatedPercent, setAnimatedPercent] = useState(0);
+  const [animatedValue, setAnimatedValue] = useState(0);
+
+  useEffect(() => {
+    let start = null;
+    const duration = 1000;
+
+    const animate = (timestamp) => {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+      const progress = Math.min(elapsed / duration, 1);
+
+      setAnimatedPercent(percent * progress);
+      setAnimatedValue(value * progress);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    const animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [percent, value]);
+
   return (
     <div className="card border-0 shadow-sm p-4 rounded-4 metric-card h-100">
       <div className="d-flex justify-content-between align-items-start mb-3">
         <div>
           <p className="mb-1 small">{title}</p>
           <h3 className="fw-bold m-0">
-            {unit ? unit : " "} {formatIndianNumber(value)}
+            {unit ? unit : " "} {formatIndianNumber(animatedValue)}
           </h3>
         </div>
         <div
           className="bg-warning bg-opacity-25 d-flex align-items-center justify-content-center rounded-2"
-          style={{ width: 36, height: 36, color: "#875200" }}
+          style={{
+            width: 36,
+            height: 36,
+            color: "#875200",
+          }}
         >
           <i className={iconClass} />
         </div>
@@ -331,7 +454,7 @@ function MetricCard({ title, value, unit, percent, target, iconClass }) {
             isPositive ? "text-success fw-semibold" : "text-danger fw-semibold"
           }
         >
-          {percent.toFixed(2)}% {isPositive ? "▲" : "▼"}
+          {animatedPercent.toFixed(2)}% {isPositive ? "▲" : "▼"}
         </span>
         <span className="text-muted">
           + {unit} {target} Target

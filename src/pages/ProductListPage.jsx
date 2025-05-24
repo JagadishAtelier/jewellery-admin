@@ -184,12 +184,12 @@ export default function ProductListPage() {
       </div>
 
       {loading ? (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <span className="ms-2">Loading products...</span>
-        </div>
+        <div className="d-flex justify-content-center align-items-center py-3">
+      <div className="spinner-border text-warning" role="status" style={{ width: "1.5rem", height: "1.5rem" }}>
+        <span className="visually-hidden">Loading...</span>
+      </div>
+      <span className="ms-2 small text-muted">Fetching Data...</span>
+    </div>
       ) : currentProducts.length === 0 ? (
         <p>No products {searchTerm ? `found with Product ID: ${searchTerm}` : 'available'}.</p>
       ) : (

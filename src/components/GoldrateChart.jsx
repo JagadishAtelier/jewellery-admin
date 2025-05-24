@@ -13,31 +13,23 @@ import {
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler);
 
-export default function GoldRateChart({ goldRateData }) {
-  const [range, setRange] = useState('1D'); // Default range is 7D
+export default function GoldRateChart({ data = [], metalType = "Gold" }) {
+  const [range, setRange] = useState('1D');
 
-  // Filter data based on selected range (1D or 7D)
-  const sortedData = [...goldRateData].sort((a, b) => new Date(a.date) - new Date(b.date));
-const filteredData = range === '1D' 
-  ? [sortedData[sortedData.length - 1]] 
-  : sortedData.slice(-7);
+  // Sort by timestamp (latest last)
+  const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
+  // Filter by range
+  const filteredData = range === '1D' ? sortedData.slice(-4) : sortedData.slice(-28); // 4 readings for 1D, 28 for 7D (e.g. 4 per day)
 
   const chartData = {
-    labels: [],
+    labels: filteredData.map(d => d.timestamp),
     datasets: [
       {
-        label: '18k Gold Rate (₹)',
-        data: [],
+        label: `18k ${metalType} Rate (₹)`,
+        data: filteredData.map(d => d['18k'] ?? 0),
         borderColor: '#6366f1',
-         backgroundColor: 'transparent',
-        // backgroundColor: (context) => {
-        //   const ctx = context.chart.ctx;
-        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        //   gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
-        //   gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
-        //   return gradient;
-        // },
+        backgroundColor: 'transparent',
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -47,17 +39,10 @@ const filteredData = range === '1D'
         pointBorderColor: '#fff',
       },
       {
-        label: '22k Gold Rate (₹)',
-        data: [],
+        label:  `22k ${metalType} Rate (₹)`,
+        data: filteredData.map(d => d['22k'] ?? 0),
         borderColor: '#f97316',
-         backgroundColor: 'transparent',
-        // backgroundColor: (context) => {
-        //   const ctx = context.chart.ctx;
-        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        //   gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
-        //   gradient.addColorStop(1, 'rgba(249, 115, 22, 0.05)');
-        //   return gradient;
-        // },
+        backgroundColor: 'transparent',
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -67,17 +52,10 @@ const filteredData = range === '1D'
         pointBorderColor: '#fff',
       },
       {
-        label: '24k Gold Rate (₹)',
-        data: [],
+        label:  `24k ${metalType} Rate (₹)`,
+        data: filteredData.map(d => d['24k'] ?? 0),
         borderColor: '#16a34a',
         backgroundColor: 'transparent',
-        // backgroundColor: (context) => {
-        //   const ctx = context.chart.ctx;
-        //   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        //   gradient.addColorStop(0, 'rgba(22, 163, 74, 0.4)');
-        //   gradient.addColorStop(1, 'rgba(22, 163, 74, 0.05)');
-        //   return gradient;
-        // },
         tension: 0.4,
         fill: true,
         pointRadius: 5,
@@ -88,38 +66,6 @@ const filteredData = range === '1D'
       },
     ],
   };
-  function formatDateTime(dateStr, timeStr) {
- 
-    // Convert 24-hour time to 12-hour time with AM/PM
-    const [hour, minute] = timeStr.split(':');
-    let hours = parseInt(hour, 10);
-    const minutes = minute;
-  
-    let period = 'AM';
-    if (hours >= 12) {
-      period = 'PM';
-      if (hours > 12) hours -= 12; // Convert hour to 12-hour format
-    } else if (hours === 0) {
-      hours = 12; // Midnight case
-    }
-  
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${period}`;
-  
-    return `${dateStr} ${formattedTime}`; // Example: "06/05/2025 01:00 AM"
-  }
-  // Prepare chart data based on the filtered range
-  filteredData.forEach((day) => {
-    const rateEntries = Object.entries(day.rates || {});
-    rateEntries.forEach(([time, rateObj]) => {
-        const formattedLabel = formatDateTime(day.date, time);
-        chartData.labels.push(formattedLabel);
-      
-        chartData.datasets[0].data.push(rateObj['18k'] || 0); // 18k
-        chartData.datasets[1].data.push(rateObj['22k'] || 0); // 22k
-        chartData.datasets[2].data.push(rateObj['24k'] || 0); // 24k
-      });
-      
-  });
 
   const options = {
     responsive: true,
@@ -171,9 +117,8 @@ const filteredData = range === '1D'
   };
 
   return (
-    <div className=" p-3 mb-4 " style={{ height: '340px' }}>
+    <div className="p-3 mb-4" style={{ height: '340px' }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* <h5 className="text-secondary">Gold Rate</h5> */}
         <div className="btn-group">
           <button onClick={() => setRange('1D')} className={`btn btn-sm ${range === '1D' ? 'btn-primary' : 'btn-outline-primary'}`}>1D</button>
           <button onClick={() => setRange('7D')} className={`btn btn-sm ${range === '7D' ? 'btn-primary' : 'btn-outline-primary'}`}>7D</button>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { Footer } from "./Footer";
+import { AiFillGolden } from "react-icons/ai";
 
 export default function DashboardLayout() {
   const { pathname } = useLocation();
@@ -61,7 +62,7 @@ export default function DashboardLayout() {
                     }
                   }}
                 >
-                  <i className="bi bi-graph-up" /> Analytics
+                  <i className="bi bi-graph-up" /> Dashboard
                 </Link>
               </li>
               <li className="nav-item">
@@ -97,6 +98,24 @@ export default function DashboardLayout() {
                   }}
                 >
                   <i className="bi bi-box-seam" /> Product Manager
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  to="/MetalManager"
+                  className={`nav-link d-flex align-items-center gap-2 rounded px-3 py-2 ${
+                    pathname.startsWith("/MetalManager") ||
+                    pathname.startsWith("/add-product")
+                      ? "bg-primary text-white"
+                      : "text-dark"
+                  }`}
+                  onClick={() => {
+                    if (isMobile) {
+                      toggleSidebar();
+                    }
+                  }}
+                >
+                <AiFillGolden className="me-1" /> Metal Rate Manager
                 </Link>
               </li>
             </ul>

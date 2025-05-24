@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import toast from 'react-hot-toast';
 import {
-    getCategories,
+    getCategoriesItems,
     createCategory,
     updateCategory,
     deleteCategory,
@@ -12,7 +12,7 @@ import ModernTable from '../../components/ModernTable/ModernTable.jsx'; // adjus
 
 Modal.setAppElement('#root');
 
-const bgClassOptions = [
+const bgOptions = [
     { value: 'background-black', color: '#000000' },
     { value: 'background-pink', color: '#FF66B2' },
     { value: 'background-blue', color: '#007BFF' },
@@ -26,9 +26,9 @@ const ShopByCategoryManager = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [editCat, setEditCat] = useState(null);
     const [formData, setFormData] = useState({
-        name: '',
+        label: '',
         description: '',
-        bgClass: '',
+        bg: '',
         heightClass: '',
         image: null,
     });
@@ -41,7 +41,7 @@ const ShopByCategoryManager = () => {
 
     const fetchCategories = async () => {
         try {
-            const { data } = await getCategories();
+            const { data } = await getCategoriesItems();
             setCategories(data);
         } catch (err) {
             setError('Failed to load categories');
@@ -54,9 +54,9 @@ const ShopByCategoryManager = () => {
     const openModal = (cat = null) => {
         setEditCat(cat);
         setFormData({
-            name: cat?.name || '',
+            label: cat?.label || '',
             description: cat?.description || '',
-            bgClass: cat?.bgClass || '',
+            bg: cat?.bg || '',
             heightClass: cat?.heightClass || '',
             image: null,
         });
@@ -74,13 +74,13 @@ const ShopByCategoryManager = () => {
         const itemToDelete = categories.find(c => c._id === id);
         if (!itemToDelete) return;
 
-        if (!window.confirm(`Are you sure you want to delete "${itemToDelete.name}"?`)) return;
+        if (!window.confirm(`Are you sure you want to delete "${itemToDelete.label}"?`)) return;
 
         setCategories(prev => prev.filter(c => c._id !== id));
         let undone = false;
 
         showUndoToast(
-            `Category "${itemToDelete.name}" deleted`,
+            `Category "${itemToDelete.label}" deleted`,
             () => {
                 undone = true;
                 setCategories(prev => [...prev, itemToDelete]);
@@ -104,9 +104,9 @@ const ShopByCategoryManager = () => {
         e.preventDefault();
         setSubmitting(true);
         const form = new FormData();
-        form.append('name', formData.name);
+        form.append('label', formData.label);
         form.append('description', formData.description);
-        form.append('bgClass', formData.bgClass);
+        form.append('bg', formData.bg);
         form.append('heightClass', formData.heightClass);
         if (fileInputRef.current.files[0]) {
             form.append('image', fileInputRef.current.files[0]);
@@ -132,8 +132,8 @@ const ShopByCategoryManager = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        const { label, value } = e.target;
+        setFormData({ ...formData, [label]: value });
     };
 
     const handleImageChange = (e) => {
@@ -146,21 +146,21 @@ const ShopByCategoryManager = () => {
         }
     };
 
-    const headers = ['Name', 'Description', 'Background', 'Image', 'Actions'];
+    const headers = [ 'Image','Name', 'Description', 'Background', 'Actions'];
     const rows = categories.map(cat => [
-        cat.name,
-        cat.description,
+         cat.imageUrl ? <img src={cat.imageUrl} alt={cat.label} width="60" style={{ borderRadius: "4px" }} /> : '',
+        cat.label,
+         cat.description?.length > 50 ? cat.description.slice(0, 50) + '...' : cat.description,
         <span
             style={{
-                backgroundColor: bgClassOptions.find(b => b.value === cat.bgClass)?.color,
+                backgroundColor: bgOptions.find(b => b.value === cat.bg)?.color,
                 padding: '8px',
                 borderRadius: '4px',
                 color: 'white',
             }}
         >
-            {cat.bgClass}
+            {cat.bg}
         </span>,
-        cat.imageUrl ? <img src={cat.imageUrl} alt={cat.name} width="60" style={{ borderRadius: "4px" }} /> : '',
         <div className="d-flex justify-content-center align-items-center">
             <button
                 className="btn btn-sm btn-warning me-2"
@@ -178,7 +178,14 @@ const ShopByCategoryManager = () => {
         </div>
     ]);
 
-    if (loading) return <p>Loading categories…</p>;
+    if (loading) return (
+        <div className="d-flex justify-content-center align-items-center py-3">
+      <div className="spinner-border text-warning" role="status" style={{ width: "1.5rem", height: "1.5rem" }}>
+        <span className="visually-hidden">Loading...</span>
+      </div>
+      <span className="ms-2 small text-muted">Fetching Data...</span>
+    </div>
+    );
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
@@ -205,8 +212,8 @@ const ShopByCategoryManager = () => {
                             <div className="mb-3">
                                 <label>Name<span className="text-danger small ms-1">*Required</span></label>
                                 <input
-                                    name="name"
-                                    value={formData.name}
+                                    label="label"
+                                    value={formData.label}
                                     onChange={handleInputChange}
                                     required
                                     className="form-control"
@@ -216,7 +223,7 @@ const ShopByCategoryManager = () => {
                             <div className="mb-3">
                                 <label>Description</label>
                                 <textarea
-                                    name="description"
+                                    label="description"
                                     value={formData.description}
                                     onChange={handleInputChange}
                                     className="form-control"
@@ -226,14 +233,14 @@ const ShopByCategoryManager = () => {
                             <div className="mb-3">
                                 <label>Background Class</label>
                                 <select
-                                    name="bgClass"
-                                    value={formData.bgClass}
+                                    label="bg"
+                                    value={formData.bg}
                                     onChange={handleInputChange}
                                     required
                                     className="form-control"
                                 >
                                     <option value="" disabled>Select Background</option>
-                                    {bgClassOptions.map(({ value, color }) => (
+                                    {bgOptions.map(({ value, color }) => (
                                         <option key={value} value={value} style={{ backgroundColor: color, color: "white" }}>
                                             {value}
                                         </option>
@@ -246,7 +253,7 @@ const ShopByCategoryManager = () => {
                             <div className="mb-3">
                                 <label>Height Class</label>
                                 <select
-                                    name="heightClass"
+                                    label="heightClass"
                                     value={formData.heightClass}
                                     onChange={handleInputChange}
                                     className="form-control"
@@ -262,7 +269,7 @@ const ShopByCategoryManager = () => {
                                 <label>Image</label>
                                 <input
                                     type="file"
-                                    name="image"
+                                    label="image"
                                     accept="image/*"
                                     ref={fileInputRef}
                                     onChange={handleImageChange}
