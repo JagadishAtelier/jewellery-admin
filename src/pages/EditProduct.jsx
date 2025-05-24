@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getProductsbyid, updateProductById } from '../api/productApi';
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 import toast from 'react-hot-toast';
-import { getCategories } from '../api/categoryApi';
+import { getCategoriesItems } from '../api/categoryApi';
 import { showUndoToast } from "../utils/toast";
 
 const EditProduct = () => {
@@ -26,7 +26,7 @@ const EditProduct = () => {
     wastagePercent: '',
     images: [],
     video: '',
-    category: '',
+    categoryId: [],
   });
 
   const [fileError, setFileError] = useState('');
@@ -107,7 +107,11 @@ const EditProduct = () => {
           wastagePercent: res.data.wastagePercent || '',
           images: res.data.images || [],
           video: res.data.video || '',
-          category: res.data.categoryId || '',
+          categoryId: Array.isArray(res.data.categoryId)
+                      ? res.data.categoryId
+                      : res.data.categoryId != null
+                        ? [res.data.categoryId]
+                        : [],
         });
         setPreviewImages(res.data.images || []);
       } catch (error) {
@@ -117,7 +121,7 @@ const EditProduct = () => {
 
     const fetchCategories = async () => {
       try {
-        const res = await getCategories();
+        const res = await getCategoriesItems();
         setCategories(res.data || []);
       } catch (error) {
         console.error('Error fetching categories', error);
@@ -172,7 +176,7 @@ const EditProduct = () => {
       wastagePercent: '',
       images: [],
       video: '',
-      category: '',
+      categoryId: [],
     });
     setPreviewImages([]);
     setFileError('');
@@ -316,24 +320,54 @@ const EditProduct = () => {
           </div>
 
           <div className="col-md-6">
-            <label htmlFor="category" className="form-label fw-semibold">
-              Category
+             <label htmlFor="categoryId" className="form-label fw-semibold">
+              Categories
             </label>
-            <select
-              id="category"
-              name="category"
-              className="form-select"
-              value={formData.category}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>Select category</option>
-              {categories.map((cat) => (
-                <option key={cat._id || cat.id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+
+            <div className="dropdown">
+              <button
+                className="form-select text-start"
+                type="button"
+                id="dropdownCategory"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {formData.categoryId.length > 0
+                  ? categories
+                      .filter((cat) => formData.categoryId.includes(cat._id))
+                      .map((cat) => cat.label)
+                      .join(", ")
+                  : "Select categories"}
+              </button>
+
+              <ul
+                className="dropdown-menu p-2 w-100"
+                aria-labelledby="dropdownCategory"
+                style={{ maxHeight: '200px', overflowY: 'auto' }}
+              >
+                {categories.map((cat) => (
+                  <li key={cat._id} className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`cat-${cat._id}`}
+                      checked={formData.categoryId.includes(cat._id)}
+                      onChange={() => {
+                        setFormData((prev) => {
+                          const selected = prev.categoryId.includes(cat._id)
+                            ? prev.categoryId.filter((id) => id !== cat._id)
+                            : [...prev.categoryId, cat._id];
+                          return { ...prev, categoryId: selected };
+                        });
+                      }}
+                    />
+                    <label className="form-check-label ms-2" htmlFor={`cat-${cat._id}`}>
+                      {cat.label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div className="col-md-6">

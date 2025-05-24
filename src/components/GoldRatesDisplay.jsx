@@ -46,11 +46,11 @@ const GoldRatesDisplay = () => {
 
   return (
    <div className="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 align-items-center small text-muted fw-medium text-center text-md-start">
-  <div><span className="text-dark">24k:</span> <span className="text-warning">₹{rates['24k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
+  <div><span className="text-dark"><strong>Gold Rate: </strong>24k:</span> <span className="text-warning">₹{rates['24k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
   <div><span className="text-dark">22k:</span> <span className="text-warning">₹{rates['22k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
   <div><span className="text-dark">18k:</span> <span className="text-warning">₹{rates['18k']?.ratePerGram?.toFixed(2) || '-'}</span></div>
-  <div><span className="text-dark">Updated:</span> <span className="text-success">{lastUpdatedStr}</span></div>
-  <div><span className="text-dark">Next update:</span> <span className="text-muted">{nextInMinutes !== null ? `${nextInMinutes} min${nextInMinutes !== 1 ? 's' : ''}` : '-'}</span></div>
+  {/* <div><span className="text-dark">Updated:</span> <span className="text-success">{lastUpdatedStr}</span></div>
+  <div><span className="text-dark">Next update:</span> <span className="text-muted">{nextInMinutes !== null ? `${nextInMinutes} min${nextInMinutes !== 1 ? 's' : ''}` : '-'}</span></div> */}
 </div>
 
   );

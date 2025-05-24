@@ -9,6 +9,7 @@ import ShopByCategoryManager from "./components/ShopByCategoryManager/ShopByCate
 import { Toaster } from "react-hot-toast";
 import Aanalytics from "./pages/Aanalytics";
 import MetalManager from "./pages/MetalManager";
+import Category from "./components/Category/Category";
 
 function App() {
   return (
@@ -21,12 +22,13 @@ function App() {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Aanalytics />} />
-          <Route path="category" element={<ShopByCategoryManager />} />
+          {/* <Route path="category" element={<ShopByCategoryManager />} /> */}
           <Route path="MetalManager" element={<MetalManager />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="allproduct" element={<ProductListPage />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="update-goldrate" element={<SetGoldRatePage/>} />
+          <Route path="/category" element={<Category/>} />
         </Route>
       </Routes>
     </>

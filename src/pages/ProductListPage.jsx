@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProducts, deleteProduct } from "../api/productApi";
-import { getCategories } from "../api/categoryApi.js";
+import { getCategoriesItems } from "../api/categoryApi.js";
 import { useNavigate } from "react-router-dom";
 import { showUndoToast } from "../utils/toast.jsx";
 import toast from 'react-hot-toast';
@@ -38,26 +38,36 @@ export default function ProductListPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await getCategories();
+      const res = await getCategoriesItems();
       setCategories(res.data);
     } catch (err) {
       console.error("Failed to fetch categories", err);
     }
   };
 
-  const getCategoryName = (id) => {
-    const category = categories.find(c => c._id === id);
-    return category ? category.name : "Unknown";
+  const getCategoryName = (ids) => {
+   if (!Array.isArray(ids)) return "Unknown";
+  const labels = ids.map(id => {
+    const cat = categories.find(c => c._id === id);
+    return cat ? cat.label : "Unknown";
+  });
+  return labels.join(", ");
   };
 
-  const uniqueCategoryNames = ["All", ...new Set(products.map(p => getCategoryName(p.category)).filter(name => name !== "Unknown"))];
+  const uniqueCategoryNames = ["All", ...new Set(
+  products
+    .flatMap(p => p.categoryId) // flatten all categoryId arrays
+    .map(id => getCategoryName([id])) // call with array
+    .filter(name => name !== "Unknown")
+)];
 
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.productid.toLowerCase().includes(searchTerm.toLowerCase());
-    const categoryName = getCategoryName(product.categoryId);
-    const matchesCategory = categoryFilter === "All" || categoryName === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const matchesSearch = product.productid.toLowerCase().includes(searchTerm.toLowerCase());
+  const categoryNames = getCategoryName(product.categoryId).split(", ");
+  const matchesCategory = categoryFilter === "All" || categoryNames.includes(categoryFilter);
+  return matchesSearch && matchesCategory;
+});
+
 
   const handleDelete = (id) => {
     const itemToDelete = products.find(p => p._id === id);
@@ -141,6 +151,7 @@ export default function ProductListPage() {
       </div>
     )
   ]);
+console.log(products);
 
   return (
     <div className="container my-4 bg-white p-4 rounded-4 shadow">
@@ -153,7 +164,7 @@ export default function ProductListPage() {
 
       <div className="mb-3 row">
         <div className="col-md-6 mb-2">
-          <div className="input-group rounded-pill overflow-hidden">
+          <div className="input-group overflow-hidden">
           <span className="input-group-text bg-white border-0">
             <i className="bi bi-search"></i>
           </span>

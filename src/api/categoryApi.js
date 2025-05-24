@@ -3,6 +3,11 @@ import axios from 'axios';
 const API = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
 
 export const getCategories = () => API.get('/categories');
+export const CreatCategoriesStyle = (columnClass) => API.post('/categories/style', { columnClass });
+
+
+
+export const CreatCategoriesItem = (styleId) => API.post(`/categories/${styleId}`);
 export const getCategoriesItems = () => API.get('/categories/items');
 
 export const createCategory = (formData) =>

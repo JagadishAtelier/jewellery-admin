@@ -82,12 +82,29 @@ export default function DashboardLayout() {
                   <i className="bi bi-grid-3x3-gap-fill" /> Category Manager
                 </Link>
               </li>
+              {/* <li className="nav-item">
+                <Link
+                  to="/categoryTest"
+                  className={`nav-link d-flex align-items-center gap-2 rounded px-3 py-2 ${
+                    pathname === "/categoryTest"
+                      ? "bg-primary text-white"
+                      : "text-dark"
+                  }`}
+                  onClick={() => {
+                    if (isMobile) {
+                      toggleSidebar();
+                    }
+                  }}
+                >
+                  <i className="bi bi-grid-3x3-gap-fill" /> Category Manager
+                </Link>
+              </li> */}
               <li className="nav-item">
                 <Link
                   to="/allproduct"
                   className={`nav-link d-flex align-items-center gap-2 rounded px-3 py-2 ${
                     pathname.startsWith("/allproduct") ||
-                    pathname.startsWith("/add-product")
+                    pathname.startsWith("/add-product") || pathname.startsWith("/edit-product")
                       ? "bg-primary text-white"
                       : "text-dark"
                   }`}
@@ -104,8 +121,7 @@ export default function DashboardLayout() {
                 <Link
                   to="/MetalManager"
                   className={`nav-link d-flex align-items-center gap-2 rounded px-3 py-2 ${
-                    pathname.startsWith("/MetalManager") ||
-                    pathname.startsWith("/add-product")
+                    pathname.startsWith("/MetalManager")
                       ? "bg-primary text-white"
                       : "text-dark"
                   }`}

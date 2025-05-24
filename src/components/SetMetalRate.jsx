@@ -1,6 +1,17 @@
 import { Modal, Button, Form } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { updateGoldRate, getGoldRates } from "../api/goldRateApi"; // Ensure getGoldRates is implemented
+import {
+  getGoldRates,
+  updateGoldRate,
+} from "../api/goldRateApi";
+import {
+  getSilverRates,
+  updateSilverRate,
+} from "../api/silverRateapi.js";
+import {
+  getPlatinumRates,
+  updatePlatinumRate,
+} from "../api/platinumRateApi";
 
 const karats = ["24k", "22k", "18k"];
 
@@ -10,14 +21,23 @@ const UpdateRateModal = ({ show, handleClose, metal }) => {
   const [loading, setLoading] = useState(false);
 
   // 🟡 Fetch latest rate when modal opens
-  useEffect(() => {
+ useEffect(() => {
   const fetchLatest = async () => {
     if (show && metal) {
       setLoading(true);
       try {
-        const latest = await getGoldRates(metal); // latest.data is an array
+        const getRateApi = {
+          gold: getGoldRates,
+          silver: getSilverRates,
+          platinum: getPlatinumRates,
+        };
+
+        const metalKey = metal.toLowerCase();
+        const fetchFunc = getRateApi[metalKey];
+
+        const latest = await fetchFunc();
         const normalizedRates = latest.data.reduce((acc, entry) => {
-          acc[entry.karat] = entry.ratePerGram.toFixed(2); // optional: round to 2 decimals
+          acc[entry.karat] = entry.ratePerGram.toFixed(2);
           return acc;
         }, {});
 
@@ -40,6 +60,8 @@ const UpdateRateModal = ({ show, handleClose, metal }) => {
 }, [show, metal]);
 
 
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -48,10 +70,19 @@ const UpdateRateModal = ({ show, handleClose, metal }) => {
  const handleSubmit = async () => {
   setSaving(true);
   try {
+    const updateRateApi = {
+      gold: updateGoldRate,
+      silver: updateSilverRate,
+      platinum: updatePlatinumRate,
+    };
+
+    const metalKey = metal.toLowerCase();
+    const updateFunc = updateRateApi[metalKey];
+
     for (const karat of karats) {
       const ratePerGram = parseFloat(form[karat]);
       if (!isNaN(ratePerGram)) {
-        await updateGoldRate({ karat, ratePerGram });
+        await updateFunc({ karat, ratePerGram });
       }
     }
     handleClose(true);
@@ -62,7 +93,6 @@ const UpdateRateModal = ({ show, handleClose, metal }) => {
     setSaving(false);
   }
 };
-
 
   return (
     <Modal show={show} onHide={() => handleClose(false)} centered>

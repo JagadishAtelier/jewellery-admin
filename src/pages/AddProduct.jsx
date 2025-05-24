@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { AddNewProduct } from "../api/productApi";
-import { getCategories } from "../api/categoryApi";
+import { getCategoriesItems } from "../api/categoryApi";
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 import { showUndoToast } from "../utils/toast";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ export default function AddProduct() {
     weight: "",
     makingCost: "",
     wastage: "",
-    categoryId: "",
+    categoryId: [],
     images: [],
     video: null,
   });
@@ -37,7 +37,7 @@ export default function AddProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await getCategories();
+        const res = await getCategoriesItems();
         if (res.data && Array.isArray(res.data)) {
           setCategoriesId(res.data);
         }
@@ -239,7 +239,7 @@ export default function AddProduct() {
       weight: "",
       makingCost: "",
       wastage: "",
-      categoryId: "",
+      categoryId: [],
       images: [],
       video: null,
     });
@@ -362,27 +362,57 @@ export default function AddProduct() {
               />
             </div>
 
-            <div className="col-12 mt-2">
-              <label htmlFor="categoryId" className="form-label fw-semibold">
-                Category
-              </label>
-              <select
-                id="categoryId"
-                name="categoryId"
-                className="form-select"
-                value={formData.categoryId}
-                onChange={handleChange}
-              >
-                <option value="" disabled>
-                  Select a category
-                </option>
-                {categoriesId.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="col-12 mt-2">
+          <label htmlFor="categoryId" className="form-label fw-semibold">
+            Category
+          </label>
+
+          <div className="dropdown">
+            <button
+              className="form-select text-start"
+              type="button"
+              id="dropdownCategory"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {formData.categoryId.length > 0
+                ? categoriesId
+                    .filter((cat) => formData.categoryId.includes(cat._id))
+                    .map((cat) => cat.label)
+                    .join(", ")
+                : "Select categories"}
+            </button>
+
+            <ul className="dropdown-menu p-2 w-100" aria-labelledby="dropdownCategory" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {categoriesId.map((cat) => (
+                <li key={cat._id} className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value={cat._id}
+                    id={`cat-${cat._id}`}
+                    checked={formData.categoryId.includes(cat._id)}
+                    onChange={(e) => {
+                      const selected = [...formData.categoryId];
+                      if (e.target.checked) {
+                        selected.push(cat._id);
+                      } else {
+                        const index = selected.indexOf(cat._id);
+                        if (index > -1) selected.splice(index, 1);
+                      }
+                      setFormData((prev) => ({ ...prev, categoryId: selected }));
+                    }}
+                  />
+                  <label className="form-check-label ms-2" htmlFor={`cat-${cat._id}`}>
+                    {cat.label}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+
 
             <div className="col-12 mt-2">
               <label htmlFor="karat" className="form-label fw-semibold">
