@@ -5,7 +5,7 @@ import small from "../../assets/box-w-small.png";
 import "./Catagories.css";
 import Modal from "react-modal";
 import toast from "react-hot-toast";
-// import { showUndoToast } from "../../utils/toast.jsx";
+import { showUndoToast } from "../../utils/toast.jsx";
 import {
   createCategory,
   updateCategory,
@@ -139,37 +139,37 @@ const Category = () => {
 };
 
 
-//   const handleDelete = (id) => {
-//     const itemToDelete = categories.find((c) => c._id === id);
-//     if (!itemToDelete) return;
+  const handleDelete = (id) => {
+    const itemToDelete = categories.find((c) => c._id === id);
+    if (!itemToDelete) return;
 
-//     if (
-//       !window.confirm(
-//         `Are you sure you want to delete "${itemToDelete.label}"?`
-//       )
-//     )
-//       return;
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${itemToDelete.label}"?`
+      )
+    )
+      return;
 
-//     setCategories((prev) => prev.filter((c) => c._id !== id));
-//     let undone = false;
+    setCategories((prev) => prev.filter((c) => c._id !== id));
+    let undone = false;
 
-//     showUndoToast(`Category "${itemToDelete.label}" deleted`, () => {
-//       undone = true;
-//       setCategories((prev) => [...prev, itemToDelete]);
-//     });
+    showUndoToast(`Category "${itemToDelete.label}" deleted`, () => {
+      undone = true;
+      setCategories((prev) => [...prev, itemToDelete]);
+    });
 
-//     setTimeout(async () => {
-//       if (!undone) {
-//         try {
-//           await deleteCategory(id);
-//         } catch (err) {
-//           toast.error("Failed to delete on server");
-//           setCategories((prev) => [...prev, itemToDelete]);
-//           console.error(err);
-//         }
-//       }
-//     }, 5000);
-//   };
+    setTimeout(async () => {
+      if (!undone) {
+        try {
+          await deleteCategory(id);
+        } catch (err) {
+          toast.error("Failed to delete on server");
+          setCategories((prev) => [...prev, itemToDelete]);
+          console.error(err);
+        }
+      }
+    }, 5000);
+  };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -310,8 +310,8 @@ const handleSubmit = async (e) => {
                   <div className="category-name">{item.label}</div>
                   <div className="category-actions text-end bg-dark p-1  bg-opacity-25">
                     <button className="btn btn-sm btn-warning mx-1 mt-1" onClick={() => openModal(item)} style={{color:'white'}}><i className="bi bi-pencil-fill"></i></button>
-                    {/* <button className="btn btn-sm btn-danger mx-1 mt-1" onClick={() => handleDelete(item._id)}><i className="bi bi-trash-fill"></i></button>
-                    <button className="btn btn-sm btn-light mx-1 mt-1" onClick={() => handleMove(col._id, idx, 'up')}><i className="bi bi-chevron-up"></i></button>
+                    <button className="btn btn-sm btn-danger mx-1 mt-1" onClick={() => handleDelete(item._id)}><i className="bi bi-trash-fill"></i></button>
+                    {/* <button className="btn btn-sm btn-light mx-1 mt-1" onClick={() => handleMove(col._id, idx, 'up')}><i className="bi bi-chevron-up"></i></button>
                     <button className="btn btn-sm btn-light mx-1 mt-1" onClick={() => handleMove(col._id, idx, 'down')}><i className="bi bi-chevron-down"></i></button> */}
                   </div>
                 </div>
