@@ -59,7 +59,6 @@
   position: relative;
   text-decoration: none;
   color: white;
-  flex: 1;
   min-height: 150px;
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Added box-shadow transition */
 }
@@ -158,4 +157,19 @@
 
 .category-actions{
   border-radius: 10px 10px  0px 0px ;
+}
+.img-style {
+  height: 280px;
+  object-fit: contain;
+  transition: height 0.4s ease;
+}
+@media (max-width: 768px) {
+   .img-style {
+    height: 200px;
+  }
+}
+@media (max-width: 556px) {
+  .img-style {
+    height: 100px;
+  }
 }

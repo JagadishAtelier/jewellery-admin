@@ -19,6 +19,13 @@ export const updateCategory = (id, formData) =>
   API.put(`/categories/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-
+export const updateCategoryItem = async (categoryId, itemId, formData) =>
+  API.put(`/categories/${categoryId}/items/${itemId}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 export const deleteCategory = (id) => API.delete(`/categories/${id}`);
+export const deleteCategoryItem = (categoryId, itemId) => {
+  return API.delete(`/categories/${categoryId}/items/${itemId}`);
+};
+
 

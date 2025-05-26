@@ -235,6 +235,9 @@ body {
   background-color: #dab765 !important;
   border-color: #dab765 !important;
 }
+.btn-primary:focus-visible{
+  box-shadow: 0 0 0 0.25rem #dab765 !important;
+}
 .btn-outline-primary{
 color: #dab765 !important;
 border-color: #dab765 !important;

@@ -1,5 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { getGoldRates } from '../api/goldRateApi';
+import { getSilverRates } from '../api/silverRateapi';
+import { getPlatinumRates } from '../api/platinumRateApi';
 
 export const GoldRateContext = createContext();
 
